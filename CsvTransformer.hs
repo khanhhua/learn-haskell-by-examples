@@ -56,10 +56,14 @@ lineToJson ((Header columnNames):lines) =
             Header _ -> acc
             Row values ->
                 let dict = fromList $ map (\(name, value) ->
-                            ( name, Str value )
+                            case name of
+                                "Id" -> ( name, Int value )
+                                "Name" -> ( name, Str value )
+                                "Dob" -> ( name, Str value )
+                                _ -> error "Not supported field"
                         ) (zip columnNames values)
                 in (Obj dict):acc
-        ) [] lines
+        ) [] (reverse lines)
 
 writeToFile :: String -> IO ()
 writeToFile json = do
