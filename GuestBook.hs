@@ -1,6 +1,5 @@
 module Main where
 
-import System.Exit
 import Control.Monad.State
 import Text.Printf
 import Data.List
@@ -23,8 +22,8 @@ guestBook = do
             entries <- get
             put (entry : entries)
             guestBook
-        'q' ->
-            liftIO $ exitSuccess 
+        'q' -> do
+            return ()
         _ ->
             guestBook
     
@@ -45,7 +44,9 @@ uiSearch entries = do
     putStr "Keyword: "
     keyword <- getLine
     let filtered = filter (\(name, _) -> keyword `isPrefixOf` name) entries
+        list = intercalate "\n" $ map (\(name, age) -> printf "%s: %d" name age) filtered
     putStrLn $ printf "Found: %d" (length filtered)
+    putStrLn list
 
 
 uiEnterNewEntry :: IO Entry
